@@ -1,0 +1,315 @@
+#ifndef SET_SET_HPP
+#define SET_SET_HPP
+
+#include "exceptions.hpp"
+
+template<typename T>
+class Iterator;
+
+template<typename T>
+class Set {
+private:
+    T* data;
+    size_t length;
+
+    void memory_alloc();
+
+    void sort();
+
+public:
+    Set();
+
+    Set(const Set<T> &s);
+
+    Set(Set<T> &&s);
+
+    explicit Set(std::initializer_list<T> lst);
+
+    ~Set();
+
+    Set<T> &operator=(const Set<T> &lst);
+
+    int get_length() const;
+
+    bool contains(const T &elem) const;
+
+    void add(const T &elem);
+
+    void remove(const T &elem);
+
+    T *to_array();
+
+    Set<T> &union_1(const Set<T> &s);
+
+    Set<T> &intersection(Set<T> &s);
+
+    Set<T> &subtract(const Set<T> s);
+
+    template<typename _T>
+    friend std::ostream &operator<<(std::ostream &os, const Set<_T> &lst);
+
+    Set<T> &operator+=(const Set<T> &s);
+
+    Set<T> &operator*=(const Set<T> &s);
+
+    Set<T> &operator/=(const Set<T> &s);
+
+    template<typename _T>
+    friend Set<_T> operator+(const Set<_T> &s1, const Set<_T> &s2);
+
+    template<typename _T>
+    friend Set<_T> operator*(const Set<_T> &s1, const Set<_T> &s2);
+
+    template<typename _T>
+    friend Set<_T> operator/(const Set<_T> &s1, const Set<T> &s2);
+
+    Iterator<T> iterator_begin();
+
+    Iterator<T> iterator_end();
+
+    void clear();
+
+};
+
+template<typename T>
+void Set<T>::memory_alloc() {
+    if (data != nullptr) {
+        try {
+            T *new_data = new T[length + 1];
+            for (size_t i = 0; i < length; ++i) {
+                new_data[i] = data[i];
+            }
+            delete[] data;
+            data = new_data;
+        }
+        catch (std::bad_alloc &ex) {
+            throw Exceptions("Failed to allocate memory");
+        }
+    } else {
+        try {
+            data = new T[length];
+        } catch (std::bad_alloc &ex) {
+            throw Exceptions("Failed to allocate memory");
+        }
+    }
+}
+
+template<typename T>
+Set<T>::Set() : data(nullptr), length(0) {}
+
+template<typename T>
+Set<T>::Set(const Set<T> &s) : data(nullptr), length(s.length) {
+    if (length == 0) {
+        throw Exceptions("Incorrect length of choosen set");
+    }
+    memory_alloc();
+    for (size_t i = 0; i < length; ++i) {
+        data[i] = s.data[i];
+    }
+    sort();
+}
+
+template<typename T>
+Set<T>::Set(Set<T> &&s) : data(s.data), length(s.length) {
+    if (length == 0) {
+        throw Exceptions("Incorrect length of choosen set");
+    }
+    s.data = nullptr;
+    s.length = 0;
+    sort();
+}
+
+template<typename T>
+Set<T>::Set(std::initializer_list<T> lst) : data(nullptr), length(0) {
+    for (const T &elem: lst) {
+        add(elem);
+    }
+    sort();
+}
+
+template<typename T>
+Set<T>::~Set() {
+    length = 0;
+    delete[] data;
+}
+
+template<typename T>
+Set<T> &Set<T>::operator=(const Set<T> &s) {
+    if (this != &s) {
+        //delete[] data;
+        length = s.length;
+        memory_alloc();
+        for (size_t i = 0; i < length; ++i)
+            data[i] = s.data[i];
+    }
+    return *this;
+}
+
+template<typename T>
+int Set<T>::get_length() const {
+    return length;
+}
+
+template<typename T>
+bool Set<T>::contains(const T &elem) const {
+    for (size_t i = 0; i < length; ++i) {
+        if (data[i] == elem) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template<typename T>
+void Set<T>::add(const T &elem) {
+    if (!contains(elem)) {
+        memory_alloc();
+        data[length] = elem;
+        ++length;
+    }
+}
+
+template<typename T>
+void Set<T>::remove(const T &elem) {
+    if (!contains(elem)) {
+        throw Exceptions("This element is not in the set");
+    }
+    T *new_data = new T[length - 1];
+    size_t j = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (data[i] != elem) {
+            new_data[j] = data[i];
+            ++j;
+        }
+    }
+    delete[] data;
+    data = new_data;
+    --length;
+}
+
+template<typename T>
+T *Set<T>::to_array() {
+    if (data == nullptr) {
+        throw Exceptions("Data is null");
+    }
+    try {
+        T *arr = new T[length];
+        for (size_t i = 0; i < length; ++i) {
+            arr[i] = data[i];
+        }
+        return arr;
+    } catch (std::bad_alloc &ex) {
+        throw Exceptions("Failed to allocate memory");
+    }
+}
+
+template<typename T>
+Set<T> &Set<T>::union_1(const Set<T> &s) {
+    for (size_t i = 0; i < s.length; ++i) {
+        add(s.data[i]);
+    }
+    return *this;
+}
+
+template<typename T>
+Set<T> &Set<T>::intersection(Set<T> &s) {
+    Set<T> result;
+    for (size_t i = 0; i < length; ++i) {
+        if (s.contains(data[i])) {
+            result.add(data[i]);
+        }
+    }
+    *this = result;
+    return *this;
+}
+
+template<typename T>
+Set<T> &Set<T>::subtract(const Set<T> s) {
+    Set<T> result{};
+    for (size_t i = 0; i < length; ++i) {
+        if (!s.contains(data[i])) {
+            result.add(data[i]);
+        }
+    }
+    *this = result;
+    return *this;
+}
+
+template<typename T>
+std::ostream &operator<<(std::ostream &os, const Set<T> &lst) {
+    for (size_t i = 0; i < lst.length; ++i) {
+        os << lst.data[i] << " ";
+    }
+    return os;
+}
+
+template<typename T>
+Set<T> &Set<T>::operator+=(const Set<T> &s) {
+    union_1(s);
+    return *this;
+}
+
+template<typename T>
+Set<T> &Set<T>::operator*=(const Set<T> &s) {
+    intersection(s);
+    return *this;
+}
+
+template<typename T>
+Set<T> &Set<T>::operator/=(const Set<T> &s) {
+    subtract(s);
+    return *this;
+}
+
+template<typename T>
+Set<T> operator+(const Set<T> &s1, const Set<T> &s2) {
+    Set<T> result = s1;
+    result += s2;
+    return result;
+}
+
+template<typename T>
+Set<T> operator*(const Set<T> &s1, const Set<T> &s2) {
+    Set<T> result = s1;
+    result *= s2;
+    return result;
+}
+
+template<typename T>
+Set<T> operator/(const Set<T> &s1, const Set<T> &s2) {
+    Set<T> result = s1;
+    result /= s2;
+    return result;
+}
+
+template<typename T>
+Iterator<T> Set<T>::iterator_begin() {
+    return Iterator<T>((static_cast<Iterator<int>>(data)));
+}
+
+template<typename T>
+Iterator<T> Set<T>::iterator_end() {
+    return Iterator<T>(data + length);
+}
+
+template<typename T>
+void Set<T>::clear() {
+    delete[] data;
+    data = nullptr;
+    length = 0;
+}
+
+template<typename T>
+void Set<T>::sort() {
+    for (size_t i = 1; i < length; ++i) {
+        T key = data[i];
+        size_t j = i - 1;
+        while (j >= 0 && data[j] > key) {
+            data[j + 1] = data[j];
+            --j;
+        }
+        data[j + 1] = key;
+    }
+}
+
+#endif //SET_SET_HPP

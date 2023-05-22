@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(oop_lab_1 main.cpp
-                    set.h)
+                    set.hpp
+                    exception.cpp
+                    exceptions.hpp
+                    iterator.hpp)
 
 install(TARGETS oop_lab_1
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
