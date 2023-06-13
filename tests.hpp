@@ -3,6 +3,7 @@
 
 #include "Iterator.hpp"
 #include "Property.hpp"
+#include "Decorator.hpp"
 #include "set.hpp"
 #include "exceptions.hpp"
 

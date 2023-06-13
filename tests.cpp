@@ -22,29 +22,33 @@ void multiplay_check();
 void division_check();
 void itr_begin();
 void itr_end();
+void clear_check();
 void property_check();
+void decorator_check();
 
 void tests(){
-    constructors_1 ();
-    operator_check();
-    get_len();
-    contains_check();
-    add_check();
-    remove_check();
-    to_arr_check();
-    union_check();
-    intersection_check();
-    subtract_check();
-    plus_equals();
-    multyplay_equals();
-    division_equals();
-    plus_check();
-    multiplay_check();
-    division_check();
-    cout << "\033[0m" << endl; //меняю цвет обратно для наблюдателя
-    itr_begin();
-    itr_end();
-    property_check();
+//    constructors_1 ();
+//    operator_check();
+//    get_len();
+//    contains_check();
+//    add_check();
+//    remove_check();
+//    to_arr_check();
+//    union_check();
+//    intersection_check();
+//    subtract_check();
+//    plus_equals();
+//    multyplay_equals();
+//    division_equals();
+//    plus_check();
+//    multiplay_check();
+//    division_check();
+//    clear_check();
+//    cout << "\033[0m" << endl; //меняю цвет обратно для наблюдателя
+//    itr_begin();
+//    itr_end();
+//    property_check();
+    decorator_check();
 }
 
 void printt(){
@@ -352,6 +356,15 @@ void division_check(){
     printt();
 }
 
+void clear_check(){
+    cout<< "Clear check" << endl;
+    Set<int> a{1, 4, 7, 9, 8, 5, 10};
+    cout<< "Set: "<< a << endl;
+    a.clear();
+    cout<< "Set after clear: "<< a << endl;
+    printt();
+}
+
 void itr_begin(){
     cout<< "Iterator begin check" << endl;
     Set<int> g{4, 7, 9, 10};
@@ -382,22 +395,45 @@ void itr_end(){
 }
 
 void property_check() {
+    cout<< "Pattern property check" << endl;
     Set<int> set{1,2,3,4,5,6,7,8,9,10};
     SetSizeProperty sizeProperty(set, 0, 100);
     try {
+       cout << "Size of set before property: " << sizeProperty.get() << endl;
        sizeProperty.setter(5);
        cout << "Set after property: " << sizeProperty << endl;
-       cout << "Size of set: " << sizeProperty.get() << endl;
+       cout << "Size of set after propety: " << sizeProperty.get() << endl;
     } catch(Exceptions &ex) {
        cout<< ex;
     }
     printt();
     try {
+       cout << "Size of set before property: " << sizeProperty.get() << endl;
+       cout << "Necessary size of set for this test: -1"<< endl;
        sizeProperty.setter(-1);
-       cout << "Set values: " << sizeProperty << endl;
        cout << "Size of set: " << sizeProperty.get() << endl;
     } catch(Exceptions &ex) {
        cout<< ex;
     }
     printt();
+}
+
+void decorator_check(){
+    MultiSet<int> multi;
+    try {
+        multi.add(10);
+        multi.add(20);
+        multi.add(30);
+        multi.add(20);
+        multi.add(10);
+    } catch (Exceptions &ex) {
+        cout<< ex;
+    }
+    cout << multi << endl; // Выводит: 10 20 30 20
+    cout << "Occurences of 20: " << multi.count(20) << endl; // Выводит: Occurrences of 20: 2
+
+    multi.remove(20);
+
+    cout << multi << endl; // Выводит: 10 30
+    cout << "Occurences of 20: " << multi.count(20) << endl;
 }

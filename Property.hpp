@@ -22,14 +22,13 @@ public:
         if (new_size < min_size || new_size > max_size) {
             std::cout << "The size should be in the range from " << min_size << " to " << max_size << std::endl;
         } else {
-            if (new_size>=set.get_length()){
-                while (set.get_length()!=new_size)
-                    set.add(0);
-            } else {
+            if (new_size <= set.get_length()){
                 Set <int> set_;
                 for (int i = 0; i< new_size;i++)
                     set_.add(set[i]);
                 set = set_;
+            } else {
+                std::cout << "The size should be smaller then another set " <<  std::endl;
             }
         }
     }

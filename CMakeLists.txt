@@ -11,6 +11,7 @@ add_executable(oop_lab_1 main.cpp
                     exceptions.hpp
                     iterator.hpp
                     property.hpp
+                    decorator.hpp
                     tests.cpp
                     tests.hpp)
 

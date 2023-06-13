@@ -1,23 +1,27 @@
 #ifndef SET_SET_HPP
 #define SET_SET_HPP
 
-/// явный вызов конструктора перемещения
-
-
 #include "exceptions.hpp"
+
+template <typename T>
+class Base {
+public:
+    virtual void add(const T& value) = 0;
+    virtual void sort() = 0;
+    virtual void memory_alloc() = 0;
+    //virtual bool contains(const T& value) const = 0;
+    virtual int get_length() const = 0;
+    virtual ~Base() {}
+};
 
 template<typename T>
 class Iterator;
 
 template<typename T>
-class Set {
-private:
+class Set{
+protected:
     T* data;
     size_t length;
-
-    void memory_alloc();
-
-    void sort();
 
 public:
 
@@ -37,11 +41,15 @@ public:
 
     bool contains(const T &elem) const;
 
-    void add(const T &elem);
+    virtual void add(const T &elem);
 
     void remove(const T &elem);
 
     T *to_array();
+
+    void memory_alloc();
+
+    void sort();
 
     Set<T> &union_1(const Set<T> &s);
 
@@ -179,6 +187,7 @@ void Set<T>::add(const T &elem) {
 
 template<typename T>
 void Set<T>::remove(const T &elem) {
+    int cur = length;
     if (!contains(elem)) {
         throw Exceptions("This element is not in the set");
     }
@@ -188,11 +197,13 @@ void Set<T>::remove(const T &elem) {
         if (data[i] != elem) {
             new_data[j] = data[i];
             ++j;
+        } else {
+            cur--;
         }
     }
     delete[] data;
     data = new_data;
-    --length;
+    length=cur;
 }
 
 template<typename T>
