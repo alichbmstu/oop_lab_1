@@ -3,44 +3,52 @@
 
 #include "set.hpp"
 
-template <typename T>
+template<typename T>
 class Iterator {
 private:
-    T* element;
+    Set<T> set;
+    size_t index;
+
 public:
-    Iterator<T>(Set<T> container_obj) : element(container_obj.to_array()) {}
+    explicit Iterator(const Set<T>& set) : set(set), index(0) {}
+
+    explicit Iterator(const Set<T>& set, size_t index) : set(set), index(index) {}
 
     Iterator<T> next() {
-        ++element;
-        return *this;
+        if (index >= set.get_length()) {
+            throw Exceptions("It is already the end of the set! There is no place to move!");
+        }
+        return Iterator<T>(set, index + 1);
     }
 
-    T value() {
-        return *element;
+    T& value() {
+        if (index >= set.get_length()) {
+            throw Exceptions("It is the end of the set");
+        }
+        return set[index];
     }
 
     bool is_end() {
-        // Проверяем, достигли ли конца контейнера (nullptr)
-        return *element == nullptr;
+        return index >= set.get_length();
     }
 
     Iterator<T>& operator++() {
-        ++element;
+        ++index;
         return *this;
     }
 
-    T& operator*() {
-        return *element;
+    bool operator==(const Iterator<T>& other) const {
+        return &set == &other.set && index == other.index;
     }
 
-    bool operator==(Iterator<T>& b) {
-        return element == b.element;
-    }
-
-    bool operator!=(Iterator<T>& b) {
-        return !(*this == b);
+    bool operator!=(const Iterator<T>& other) const {
+        return (*this != other);
     }
 };
 
 
+
+
 #endif //SET_ITERATOR_HPP
+
+

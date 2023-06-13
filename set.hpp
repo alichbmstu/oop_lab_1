@@ -1,6 +1,9 @@
 #ifndef SET_SET_HPP
 #define SET_SET_HPP
 
+/// явный вызов конструктора перемещения
+
+
 #include "exceptions.hpp"
 
 template<typename T>
@@ -17,6 +20,7 @@ private:
     void sort();
 
 public:
+
     Set();
 
     Set(const Set<T> &s);
@@ -41,7 +45,7 @@ public:
 
     Set<T> &union_1(const Set<T> &s);
 
-    Set<T> &intersection(Set<T> &s);
+    Set<T> &intersection(const Set<T> &s);
 
     Set<T> &subtract(const Set<T> s);
 
@@ -61,7 +65,9 @@ public:
     friend Set<_T> operator*(const Set<_T> &s1, const Set<_T> &s2);
 
     template<typename _T>
-    friend Set<_T> operator/(const Set<_T> &s1, const Set<T> &s2);
+    friend Set<_T> operator/(const Set<_T> &s1, const Set<_T> &s2);
+
+    T &operator[](int index);
 
     Iterator<T> iterator_begin();
 
@@ -75,11 +81,11 @@ template<typename T>
 void Set<T>::memory_alloc() {
     if (data != nullptr) {
         try {
-            T *new_data = new T[length + 1];
+            T *new_data = new T[length+1];
             for (size_t i = 0; i < length; ++i) {
                 new_data[i] = data[i];
             }
-            delete[] data;
+            //delete[] data;
             data = new_data;
         }
         catch (std::bad_alloc &ex) {
@@ -129,8 +135,9 @@ Set<T>::Set(std::initializer_list<T> lst) : data(nullptr), length(0) {
 
 template<typename T>
 Set<T>::~Set() {
+    if (data!=nullptr)
+        delete[] data;
     length = 0;
-    delete[] data;
 }
 
 template<typename T>
@@ -167,6 +174,7 @@ void Set<T>::add(const T &elem) {
         data[length] = elem;
         ++length;
     }
+    sort();
 }
 
 template<typename T>
@@ -212,7 +220,7 @@ Set<T> &Set<T>::union_1(const Set<T> &s) {
 }
 
 template<typename T>
-Set<T> &Set<T>::intersection(Set<T> &s) {
+Set<T> &Set<T>::intersection(const Set<T> &s) {
     Set<T> result;
     for (size_t i = 0; i < length; ++i) {
         if (s.contains(data[i])) {
@@ -229,6 +237,11 @@ Set<T> &Set<T>::subtract(const Set<T> s) {
     for (size_t i = 0; i < length; ++i) {
         if (!s.contains(data[i])) {
             result.add(data[i]);
+        }
+    }
+    for (size_t i = 0; i < s.length; ++i) {
+        if (!contains(s.data[i])) {
+            result.add(s.data[i]);
         }
     }
     *this = result;
@@ -284,12 +297,12 @@ Set<T> operator/(const Set<T> &s1, const Set<T> &s2) {
 
 template<typename T>
 Iterator<T> Set<T>::iterator_begin() {
-    return Iterator<T>((static_cast<Iterator<int>>(data)));
+    return Iterator<T>(*this, 0);
 }
 
 template<typename T>
 Iterator<T> Set<T>::iterator_end() {
-    return Iterator<T>(data + length);
+    return Iterator<T>(*this, length);
 }
 
 template<typename T>
@@ -300,15 +313,23 @@ void Set<T>::clear() {
 }
 
 template<typename T>
+T &Set<T>::operator[](int index) {
+    if (index < 0 || index >= length) {
+        throw Exceptions("Incorrect index.");
+    }
+    return data[index];
+}
+
+template<typename T>
 void Set<T>::sort() {
-    for (size_t i = 1; i < length; ++i) {
-        T key = data[i];
-        size_t j = i - 1;
-        while (j >= 0 && data[j] > key) {
-            data[j + 1] = data[j];
-            --j;
+    for (size_t i = 0;i < length; ++i){
+        for (size_t j = 0; j < length; ++j){
+            if (data[i] < data[j]){
+                T cur = data[i];
+                data[i] = data[j];
+                data[j] = cur;
+            }
         }
-        data[j + 1] = key;
     }
 }
 

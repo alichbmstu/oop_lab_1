@@ -9,7 +9,10 @@ add_executable(oop_lab_1 main.cpp
                     set.hpp
                     exception.cpp
                     exceptions.hpp
-                    iterator.hpp)
+                    iterator.hpp
+                    property.hpp
+                    tests.cpp
+                    tests.hpp)
 
 install(TARGETS oop_lab_1
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
