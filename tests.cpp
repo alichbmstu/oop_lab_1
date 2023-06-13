@@ -27,27 +27,27 @@ void property_check();
 void decorator_check();
 
 void tests(){
-//    constructors_1 ();
-//    operator_check();
-//    get_len();
-//    contains_check();
-//    add_check();
-//    remove_check();
-//    to_arr_check();
-//    union_check();
-//    intersection_check();
-//    subtract_check();
-//    plus_equals();
-//    multyplay_equals();
-//    division_equals();
-//    plus_check();
-//    multiplay_check();
-//    division_check();
-//    clear_check();
-//    cout << "\033[0m" << endl; //меняю цвет обратно для наблюдателя
-//    itr_begin();
-//    itr_end();
-//    property_check();
+    constructors_1 ();
+    operator_check();
+    get_len();
+    contains_check();
+    add_check();
+    remove_check();
+    to_arr_check();
+    union_check();
+    intersection_check();
+    subtract_check();
+    plus_equals();
+    multyplay_equals();
+    division_equals();
+    plus_check();
+    multiplay_check();
+    division_check();
+    clear_check();
+    cout << "\033[0m" << endl; //меняю цвет обратно для наблюдателя
+    itr_begin();
+    itr_end();
+    property_check();
     decorator_check();
 }
 
@@ -389,7 +389,7 @@ void itr_end(){
     try {
         val.value();
     } catch(Exceptions &ex){
-        cout<<ex<<endl;
+        cout<<ex;
     }
     printt();
 }
@@ -419,21 +419,21 @@ void property_check() {
 }
 
 void decorator_check(){
+    cout << "A multiset is similar to a Set - the elements in this class\n"
+            "are also sorted in ascending order, but the values can be\n"
+            "repeated any values of times. For this class, the ability\n"
+            "to count the occurrence of an element in the set is added.\n"
+            "Implemented a Multiset using the Decorator pattern."<< endl;
+    printt();
     MultiSet<int> multi;
-    try {
-        multi.add(10);
-        multi.add(20);
-        multi.add(30);
-        multi.add(20);
-        multi.add(10);
-    } catch (Exceptions &ex) {
-        cout<< ex;
-    }
-    cout << multi << endl; // Выводит: 10 20 30 20
-    cout << "Occurences of 20: " << multi.count(20) << endl; // Выводит: Occurrences of 20: 2
-
+    multi.add(10);
+    multi.add(20);
+    multi.add(30);
+    multi.add(20);
+    multi.add(10);
+    cout << "MultiSet after add 5 elements: " << multi << endl;
+    cout << "Occurences of 20: " << multi.count(20) << endl;
     multi.remove(20);
-
-    cout << multi << endl; // Выводит: 10 30
+    cout << "MultiSet after remove element '20': " << multi << endl;
     cout << "Occurences of 20: " << multi.count(20) << endl;
 }

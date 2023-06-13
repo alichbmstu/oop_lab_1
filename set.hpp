@@ -3,16 +3,6 @@
 
 #include "exceptions.hpp"
 
-template <typename T>
-class Base {
-public:
-    virtual void add(const T& value) = 0;
-    virtual void sort() = 0;
-    virtual void memory_alloc() = 0;
-    //virtual bool contains(const T& value) const = 0;
-    virtual int get_length() const = 0;
-    virtual ~Base() {}
-};
 
 template<typename T>
 class Iterator;
@@ -22,6 +12,8 @@ class Set{
 protected:
     T* data;
     size_t length;
+    void memory_alloc();
+    void sort();
 
 public:
 
@@ -46,10 +38,6 @@ public:
     void remove(const T &elem);
 
     T *to_array();
-
-    void memory_alloc();
-
-    void sort();
 
     Set<T> &union_1(const Set<T> &s);
 
